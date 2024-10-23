@@ -1,0 +1,51 @@
+name: build-kolla-to-aliyun
+on:
+  workflow_dispatch:
+
+env:
+  TZ: Asia/Shanghai
+
+
+jobs:
+  buildx:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@master
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@master
+
+      - name: Set outputs
+        id: vars
+        run: |
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+
+      - name: Get current date
+        id: date
+        run: |
+          echo "::set-output name=today::$(date +'%Y-%m-%d')"
+          echo  $(date)
+          docker login registry.cn-hongkong.aliyuncs.com -u zhoukunpeng504@163.com -p Gc895316
+          ls -al
+
+
+
+      - name: Build and Push Docker-AMD64
+        run: |
+          apt-get update
+          apt install -y vim python3 python3-pip gcc g++ htop
+          python3 -m pip install kolla
+          python3 -m pip install docker
+          kolla-build -b ubuntu --registry registry.cn-hongkong.aliyuncs.com -n zhoukunpeng --push
+        #uses: docker/build-push-action@master
+        #with:
+          #platforms: linux/amd64
+          #context: ./${{ steps.vars.outputs.image_name }}
+          #push: true
+          #tags: registry.cn-hongkong.aliyuncs.com/zhoukunpeng/${{ steps.vars.outputs.image_name }}:${{ steps.date.outputs.today }}-${{ steps.vars.outputs.sha_short }},registry.cn-hongkong.aliyuncs.com/zhoukunpeng/${{ steps.vars.outputs.image_name }}:latest
+
+
+
