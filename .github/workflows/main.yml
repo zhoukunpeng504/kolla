@@ -28,7 +28,7 @@ jobs:
         run: |
           echo "::set-output name=today::$(date +'%Y-%m-%d')"
           echo  $(date)
-          docker login registry.cn-hongkong.aliyuncs.com -u zhoukunpeng504@163.com -p Gc895316
+          docker login -u  ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
           ls -al
 
 
@@ -39,7 +39,7 @@ jobs:
           sudo apt install -y vim python3 python3-pip gcc g++ htop
           python3 -m pip install kolla
           python3 -m pip install docker
-          kolla-build -b ubuntu --registry registry.cn-hongkong.aliyuncs.com -n zhoukunpeng --push
+          kolla-build -b ubuntu  -n zhoukunpeng505 -p default -t binary --push 
         #uses: docker/build-push-action@master
         #with:
           #platforms: linux/amd64
